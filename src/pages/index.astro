@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Tunnelbanejakten 2024">
+  <div class="page-content">
+    <div class="home-grid">
+      <div class="home-text">
+        <h1>Tunnelbanejakten 2024</h1>
+
+        <div class="notice-box">
+          <p>
+            Årets upplaga av tunnelbanejakten är tyvärr inställd. Vi siktar på att komma tillbaka
+            2025.
+          </p>
+        </div>
+
+        <p>
+          Vi har beslutat att ställa in 2024 års tunnelbanejakten pga tidsbrist hos
+          planeringsgruppen. Vi känner inte att vi, med de resurserna vi har just nu, kan leverera
+          ett evenemang som är så bra som vi vill att det ska vara.
+        </p>
+
+        <p>
+          Vi skulle behöver vara fler personer som planerar nästa år så vill du vara med är det bara
+          höra av sig!
+        </p>
+
+        <p>
+          <a href="/om-tsl/">Läs mer om vad Tunnelbanejakten går ut på →</a>
+        </p>
+      </div>
+
+      <div class="home-image">
+        <img
+          src="https://tunnelbanejakten.se/wp-content/uploads/2021/06/denys-argyriou-FvfK16cHRrE-unsplash-1024x682.jpg"
+          alt="Kvinna framför tunnelbana."
+          width="512"
+          height="341"
+          loading="eager"
+        />
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .home-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .home-image {
+      order: -1;
+    }
+  }
+</style>

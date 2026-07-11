@@ -1,0 +1,583 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Tunnelbanejakten - en scouttävling i Stockholms innerstad.' } =
+  Astro.props;
+
+const navItems = [
+  { label: 'Hem', href: '/' },
+  {
+    label: 'Info',
+    href: '/om-tsl/',
+    children: [
+      { label: 'Vad är Tunnelbanejakten?', href: '/om-tsl/' },
+      { label: 'Så här går tävlingen till', href: '/om-tsl/sa-har-gar-tavlingen-till/' },
+      { label: 'Regler och tävlingsklasser', href: '/om-tsl/regler-och-tavlingsklasser/' },
+      { label: 'Distans-klassen', href: '/distans-klassen/' },
+      { label: 'Webbappen', href: '/webappen/' },
+      { label: 'Betalningsinformation', href: '/om-tsl/betalningsinformation/' },
+      {
+        label: 'Anmälningsvillkor och personuppgifter',
+        href: '/om-tsl/samarbeten-och-personuppgifter/',
+      },
+      { label: 'Övernattning', href: '/overnattning/' },
+      { label: 'För funktionärer', href: '/om-tsl/for-funktionarer/' },
+    ],
+  },
+  { label: 'Anmälan', href: '/anmal/' },
+  {
+    label: 'Under dagen',
+    href: '/dagen/',
+    children: [
+      { label: 'Tider och datum', href: '/dagen/' },
+      { label: 'Hitta till start', href: '/dagen/hitta-till-start/' },
+      { label: 'Resor under dagen', href: '/dagen/resor-under-dagen/' },
+      { label: 'Packning', href: '/dagen/packning/' },
+      { label: 'Tillgänglighet', href: '/dagen/tillganglighet/' },
+    ],
+  },
+  {
+    label: 'Resultat',
+    href: '/resultat-2023/',
+    children: [
+      { label: 'Resultat 2023', href: '/resultat-2023/' },
+      { label: 'Resultat 2022', href: '/resultat-2022/' },
+      { label: 'Resultat 2021', href: '/resultat-2021/' },
+      { label: 'Resultat 2019', href: '/resultat-2019/' },
+      { label: 'Resultat 2018', href: '/resultat/' },
+      { label: 'Resultat 2017', href: '/resultat-2017/' },
+      { label: 'Resultat 2016', href: '/resultat-2016/' },
+      { label: 'Resultat 2015', href: '/resultat-2015/' },
+      { label: 'Resultat 2014', href: '/resultat-2014/' },
+      { label: 'Resultat 2013', href: '/resultat-2013/' },
+    ],
+  },
+  { label: 'Kontakt', href: '/kontakt/' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} - Tunnelbanejakten</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://tunnelbanejakten.se/wp-content/uploads/2021/06/cropped-TSL-favicon-1-32x32.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="site-banner-wrap">
+      <a href="/" class="site-banner-link">
+        <img
+          src="https://tunnelbanejakten.se/wp-content/uploads/2024/02/TSL-2024-Hemsida-Banner-1024x205.png"
+          alt="Tunnelbanejakten 2024"
+          width="1024"
+          height="205"
+          fetchpriority="high"
+        />
+      </a>
+    </div>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <button
+          class="menu-toggle"
+          aria-label="Öppna meny"
+          aria-expanded="false"
+          aria-controls="primary-menu"
+        >
+          MENY
+        </button>
+        <nav id="primary-menu" class="primary-nav" aria-label="Primär navigering">
+          <ul class="nav-list">
+            {
+              navItems.map((item) => (
+                <li
+                  class={`nav-item ${item.children ? 'has-dropdown' : ''} ${currentPath.startsWith(item.href) ? 'current' : ''}`}
+                >
+                  <a href={item.href} class="nav-link">
+                    {item.label}
+                  </a>
+                  {item.children && (
+                    <ul class="dropdown-menu">
+                      {item.children.map((child) => (
+                        <li class={currentPath === child.href ? 'current' : ''}>
+                          <a href={child.href}>{child.label}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <div class="content-wrapper">
+        <slot />
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>
+          <a href="/">Tunnelbanejakten</a> © 2026 Mattias Forsman
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const toggle = document.querySelector('.menu-toggle') as HTMLButtonElement;
+      const nav = document.querySelector('.primary-nav') as HTMLElement;
+
+      toggle?.addEventListener('click', () => {
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+        nav.classList.toggle('is-open', !isOpen);
+      });
+
+      // Dropdown on desktop hover / mobile click
+      document.querySelectorAll('.has-dropdown > .nav-link').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          if (window.innerWidth < 768) {
+            e.preventDefault();
+            const parent = (link as HTMLElement).parentElement!;
+            parent.classList.toggle('open');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --color-primary: #5b2d8e;
+    --color-primary-dark: #3e1e63;
+    --color-primary-light: #7b4db0;
+    --color-bg: #ffffff;
+    --color-text: #1a1a1a;
+    --color-text-muted: #555555;
+    --color-border: #e0e0e0;
+    --color-link: #5b2d8e;
+    --max-width: 860px;
+    --header-height: 60px;
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-family);
+    color: var(--color-text);
+    background: var(--color-bg);
+    line-height: 1.7;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  a {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: var(--color-primary-dark);
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ─── Banner ─────────────────────────────────────────────── */
+  .site-banner-wrap {
+    width: 100%;
+    background: #000;
+    line-height: 0;
+  }
+
+  .site-banner-link {
+    display: block;
+  }
+
+  .site-banner-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 200px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* ─── Header ─────────────────────────────────────────────── */
+  .site-header {
+    background: #fff;
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .header-inner {
+    max-width: calc(var(--max-width) + 80px);
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: var(--header-height);
+    flex-wrap: wrap;
+  }
+
+  /* ─── Navigation ─────────────────────────────────────────── */
+  .menu-toggle {
+    margin-left: auto;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-radius: 3px;
+    font-family: var(--font-family);
+    display: none;
+  }
+
+  .primary-nav {
+    margin-left: auto;
+    flex: 1;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 0;
+    align-items: center;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 8px 14px;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition:
+      color 0.15s,
+      background 0.15s;
+    white-space: nowrap;
+  }
+
+  .nav-item.current > .nav-link,
+  .nav-link:hover {
+    color: var(--color-primary);
+  }
+
+  .has-dropdown > .nav-link::after {
+    content: ' ▾';
+    font-size: 0.75rem;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-top: 2px solid var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    min-width: 220px;
+    z-index: 200;
+  }
+
+  .dropdown-menu li a {
+    display: block;
+    padding: 9px 16px;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition:
+      background 0.15s,
+      color 0.15s;
+    white-space: nowrap;
+  }
+
+  .dropdown-menu li a:hover,
+  .dropdown-menu li.current a {
+    background: #f5f0fa;
+    color: var(--color-primary);
+  }
+
+  .has-dropdown:hover .dropdown-menu {
+    display: block;
+  }
+
+  /* ─── Main content ───────────────────────────────────────── */
+  .site-main {
+    flex: 1;
+    padding: 40px 20px;
+  }
+
+  .content-wrapper {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  /* ─── Footer ─────────────────────────────────────────────── */
+  .site-footer {
+    background: #f8f8f8;
+    border-top: 1px solid var(--color-border);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .footer-inner a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .footer-inner a:hover {
+    color: var(--color-primary);
+  }
+
+  /* ─── Page typography ────────────────────────────────────── */
+  .page-content h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1.2rem;
+    color: var(--color-primary-dark);
+  }
+
+  .page-content h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary-dark);
+  }
+
+  .page-content h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+  }
+
+  .page-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .page-content p {
+    margin-bottom: 1rem;
+  }
+
+  .page-content ul,
+  .page-content ol {
+    margin: 0.75rem 0 1rem 1.5rem;
+  }
+
+  .page-content li {
+    margin-bottom: 0.4rem;
+  }
+
+  .page-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: 0.9rem;
+  }
+
+  .page-content th,
+  .page-content td {
+    border: 1px solid var(--color-border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+
+  .page-content th {
+    background: #f5f0fa;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+  }
+
+  .page-content tr:nth-child(even) td {
+    background: #fafafa;
+  }
+
+  .page-content figure {
+    margin: 1.5rem 0;
+  }
+
+  .page-content figcaption {
+    font-size: 0.825rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  .page-content img {
+    border-radius: 4px;
+  }
+
+  .page-content .link-list {
+    list-style: none;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-content .link-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary);
+    padding: 4px 0;
+  }
+
+  .page-content .link-list a::before {
+    content: '→';
+    font-size: 0.85em;
+  }
+
+  .page-content .link-list a:hover {
+    text-decoration: underline;
+  }
+
+  .page-content .notice-box {
+    background: #f5f0fa;
+    border-left: 4px solid var(--color-primary);
+    padding: 16px 20px;
+    border-radius: 0 4px 4px 0;
+    margin: 1.5rem 0;
+  }
+
+  /* ─── Hero / banner ──────────────────────────────────────── */
+  .hero-banner {
+    width: 100%;
+    margin-bottom: 2rem;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .hero-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ─── Result tables ──────────────────────────────────────── */
+  .result-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .result-section h2 {
+    margin-top: 0;
+  }
+
+  /* ─── Mobile ─────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .menu-toggle {
+      display: block;
+    }
+
+    .primary-nav {
+      display: none;
+      width: 100%;
+      order: 3;
+      margin-left: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .primary-nav.is-open {
+      display: block;
+    }
+
+    .nav-list {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .nav-link {
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 16px;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: static;
+      box-shadow: none;
+      border: none;
+      border-top: none;
+      border-left: 3px solid var(--color-primary);
+      margin-left: 16px;
+    }
+
+    .has-dropdown.open .dropdown-menu {
+      display: block;
+    }
+
+    .has-dropdown:hover .dropdown-menu {
+      display: none;
+    }
+
+    .has-dropdown.open .dropdown-menu {
+      display: block;
+    }
+  }
+</style>
